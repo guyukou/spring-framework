@@ -172,7 +172,10 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 	/** Names of beans that have already been created at least once. */
 	private final Set<String> alreadyCreated = Collections.newSetFromMap(new ConcurrentHashMap<>(256));
 
-	/** Names of beans that are currently in creation. */
+	/** Names of beans that are currently in creation.
+	 * <P>set时机：创建prototype之前</P>
+	 * <P>remove时机：创建prototype之后</P>
+	 **/
 	private final ThreadLocal<Object> prototypesCurrentlyInCreation =
 			new NamedThreadLocal<>("Prototype beans currently in creation");
 
@@ -243,10 +246,12 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 			String name, @Nullable Class<T> requiredType, @Nullable Object[] args, boolean typeCheckOnly)
 			throws BeansException {
 
+		//1. 将别名做转换，只使用最终的beanName作为参数
 		String beanName = transformedBeanName(name);
 		Object bean;
 
 		// Eagerly check singleton cache for manually registered singletons.
+		//2.如果是单例，则结果不为null，经过FactoryBean判断后则可以返回，结束。否则继续
 		Object sharedInstance = getSingleton(beanName);
 		if (sharedInstance != null && args == null) {
 			if (logger.isTraceEnabled()) {
@@ -264,6 +269,7 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 		else {
 			// Fail if we're already creating this bean instance:
 			// We're assumably within a circular reference.
+			// prototype的bean在创建之前会将beanName保存，如果出现环，第二次创建这个bean时发现map里有这个beanName，就抛出异常了
 			if (isPrototypeCurrentlyInCreation(beanName)) {
 				throw new BeanCurrentlyInCreationException(beanName);
 			}
@@ -295,6 +301,7 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 			}
 
 			try {
+				// 获取RootBeanDefinition。对于没有父BD的BD，实际就是用GenericBD复制创建一个RootBD
 				RootBeanDefinition mbd = getMergedLocalBeanDefinition(beanName);
 				checkMergedBeanDefinition(mbd, beanName, args);
 
@@ -1860,6 +1867,7 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 	 * Add the given bean to the list of disposable beans in this factory,
 	 * registering its DisposableBean interface and/or the given destroy method
 	 * to be called on factory shutdown (if applicable). Only applies to singletons.
+	 * 将给定的bean添加到该工厂中的一次性bean列表中，注册它的DisposableBean接口和/或在工厂关闭时调用给定的销毁方法(如果适用的话)。仅适用于单例。
 	 * @param beanName the name of the bean
 	 * @param bean the bean instance
 	 * @param mbd the bean definition for the bean

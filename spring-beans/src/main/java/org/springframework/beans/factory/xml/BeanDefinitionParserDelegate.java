@@ -412,9 +412,12 @@ public class BeanDefinitionParserDelegate {
 	 */
 	@Nullable
 	public BeanDefinitionHolder parseBeanDefinitionElement(Element ele, @Nullable BeanDefinition containingBean) {
+		//1. 获取id属性
 		String id = ele.getAttribute(ID_ATTRIBUTE);
+		//2. 获取name属性
 		String nameAttr = ele.getAttribute(NAME_ATTRIBUTE);
 
+		// 3.解析name属性值，添加到aliases中
 		List<String> aliases = new ArrayList<>();
 		if (StringUtils.hasLength(nameAttr)) {
 			String[] nameArr = StringUtils.tokenizeToStringArray(nameAttr, MULTI_VALUE_ATTRIBUTE_DELIMITERS);
@@ -422,6 +425,7 @@ public class BeanDefinitionParserDelegate {
 		}
 
 		String beanName = id;
+		//4.如果id为空，且name不为空，则使用name中第一个名字作为id属性值
 		if (!StringUtils.hasText(beanName) && !aliases.isEmpty()) {
 			beanName = aliases.remove(0);
 			if (logger.isTraceEnabled()) {

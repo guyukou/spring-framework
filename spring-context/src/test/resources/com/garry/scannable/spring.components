@@ -1,0 +1,10 @@
+AutowiredQualifierFooService=FooService
+DefaultNamedComponent=org.springframework.stereotype.Component
+NamedComponent=org.springframework.stereotype.Component
+FooService=FooService
+FooServiceImpl=org.springframework.stereotype.Component,FooService
+ScopedProxyTestBean=FooService
+StubFooDao=org.springframework.stereotype.Component
+NamedStubDao=org.springframework.stereotype.Component
+ServiceInvocationCounter=org.springframework.stereotype.Component
+BarComponent=org.springframework.stereotype.Component

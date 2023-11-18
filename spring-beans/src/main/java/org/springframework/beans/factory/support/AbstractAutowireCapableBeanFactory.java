@@ -1086,6 +1086,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 	/**
 	 * Apply MergedBeanDefinitionPostProcessors to the specified bean definition,
 	 * invoking their {@code postProcessMergedBeanDefinition} methods.
+	 * <p>对指定的bean定义应用MergedBeanDefinitionPostProcessors方法，调用它们的postProcessMergedBeanDefinition方法
 	 * @param mbd the merged bean definition for the bean
 	 * @param beanType the actual type of the managed bean instance
 	 * @param beanName the name of the bean
@@ -1273,6 +1274,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 	/**
 	 * Determine candidate constructors to use for the given bean, checking all registered
 	 * {@link SmartInstantiationAwareBeanPostProcessor SmartInstantiationAwareBeanPostProcessors}.
+	 * <p>检查所有已注册的SmartInstantiationAwareBeanPostProcessors，确定为给定bean使用的候选构造函数。
 	 * @param beanClass the raw class of the bean
 	 * @param beanName the name of the bean
 	 * @return the candidate constructors, or {@code null} if none specified
